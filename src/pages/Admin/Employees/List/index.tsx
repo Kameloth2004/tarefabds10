@@ -13,6 +13,7 @@ import './styles.css';
 const List = () => {
 
   const [page, setPage] = useState<SpringPage<Employee>>();
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     const params: AxiosRequestConfig = {
@@ -20,7 +21,7 @@ const List = () => {
       url: '/employees/',
       baseURL: BASE_URL,
       params: {
-        page: 0,
+        page: currentPage,
         size: 4
       },
       withCredentials: true,
@@ -33,11 +34,12 @@ const List = () => {
         console.log(page);
       });
 
-  }, []);
+  }, [currentPage]);
 
   const handlePageChange = (pageNumber: number) => {
-    // to do
+    setCurrentPage(pageNumber);
   };
+
 
   return (
     <>
@@ -49,17 +51,22 @@ const List = () => {
 
       {page?.content.map(employee => {
         return (
-          <EmployeeCard employee={employee} />
+
+          <div className='card' key={employee.id}>
+            <EmployeeCard employee={employee} />
+          </div>
+
         );
       })}
 
 
-      <Pagination
-        forcePage={0}
-        pageCount={1}
-        range={3}
-        onChange={handlePageChange}
-      />
+      <div className="row">
+        <Pagination
+          pageCount={page?.totalPages ?? 0}
+          range={3}
+          onChange={handlePageChange}
+        />
+      </div>
     </>
   );
 };
